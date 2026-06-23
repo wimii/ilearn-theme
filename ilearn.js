@@ -1,3 +1,11 @@
+// set the wallpaper's URL
+const wallpaperUrl = 'https://images.pexels.com/photos/32637184/pexels-photo-32637184.jpeg';
+const welcomeGradientA = '#ec4899';
+const welcomeGradientB = '#7c3aed';
+const textColorPrimary = "#6d28d9";
+const textColorSecondary = "darkgray";
+
+
 // extract username and set for welcome
 document.addEventListener('DOMContentLoaded', () => {
     let loginFooter = Array.from(document.querySelectorAll('div.footer-section'))
@@ -21,10 +29,10 @@ style.textContent = `
     -webkit-box-shadow:         none !important;
   }
   .course-card span:not(a span) {
-    color:                      darkgray !important;
+    color:                      ${textColorSecondary} !important;
   }
   .course-card a {
-    color:                      #87CEFA !important;
+    color:                      ${textColorPrimary} !important;
     font-weight:                700 !important;
   }
   .card-footer {
@@ -34,10 +42,10 @@ style.textContent = `
     font-family:                'Trebuchet MS', serif;
     font-size:                  4rem;
     font-weight:                bold;
-    background:                 linear-gradient(75deg, #ff6b6b, #845ec2);
+    background:                 linear-gradient(75deg, ${welcomeGradientA}, ${welcomeGradientB});
+    background-clip:            text;
     -webkit-background-clip:    text;
     -webkit-text-fill-color:    transparent;
-    background-clip:            text;
     -webkit-text-stroke:        2px transparent;
 
     position:                   absolute;
@@ -69,10 +77,9 @@ section.insertBefore(newDiv, section.children[2]);
 
 
 // set background
-const img_url = 'url("<YOUR IMAGE URL>")';
 const el = document.body; // or any element
 
-el.style.backgroundImage = img_url;
+el.style.backgroundImage = `url("${wallpaperUrl}")`;
 el.style.backgroundSize = 'cover';
 el.style.backgroundPosition = 'center';
 el.style.backgroundRepeat = 'no-repeat';
