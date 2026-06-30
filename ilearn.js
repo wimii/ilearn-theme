@@ -15,8 +15,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let name = loginInfo.querySelector('a').textContent.trim().split(' ').at(-1);
 
     let welcome = document.getElementById('custom-welcome');
-    welcome.textContent = `Welcome back, ${name}!`
+    welcome.textContent = getGreeting(name);
 });
+
+function getGreeting(username) {
+  const hour = new Date().getHours();
+
+  let timeGreeting;
+
+  if (hour <= 2) timeGreeting = "Good evening";
+  else if (hour <= 5) timeGreeting = "Go to bed";
+  else if (hour <= 11) timeGreeting = "Good morning";
+  else if (hour <= 16) timeGreeting = "Good afternoon";
+  else if (hour <= 20) timeGreeting = "Good evening";
+  else timeGreeting = "Welcome back";
+
+  const rareMessage = `beep boop bap bap?`;
+  const normalMessage = `${timeGreeting}, ${username}!`;
+
+  return Math.random() < 0.05 ? rareMessage : normalMessage;
+}
+
+console.log(getGreeting("Alex"));
 
 
 // set styles
@@ -28,11 +48,22 @@ style.textContent = `
   .card-body span:not(.course-card *) {
     color:                      ${textColorSecondary} !important;
   }
+  .card-body li.page-item a {
+    color:                      #eeeeee !important;
+    background-color:           color-mix(in srgb, ${textColorSecondary} 90%, white) !important;
+    border:                     none !important;  
+  }
+  .card-body li.page-item i {
+    color:                      #eeeeee !important;
+  }
+  .drawer-right .card,
   .course-card {
-    background:                 rgba(255,255,255,0.15) !important;
+    background:                 rgba(255,255,255,0.2) !important;
     border:                     none !important;
     box-shadow:                 none !important;
     -webkit-box-shadow:         none !important;
+    backdrop-filter:            blur(24px) !important;
+    -webkit-backdrop-filter:    blur(24px) !important;
   }
   .course-card span:not(a span) {
     color:                      ${textColorSecondary} !important;
@@ -43,6 +74,9 @@ style.textContent = `
   .course-card a {
     color:                      ${textColorPrimary} !important;
     font-weight:                700 !important;
+  }
+  .course-card:hover div.card-img-top {
+    filter:                     brightness(1);
   }
   .coursename i {
     color:                      ${textColorPrimary} !important;
@@ -69,9 +103,6 @@ style.textContent = `
   .card-img-top {
     filter:                     brightness(0.8);
     transition:                 filter 0.2s ease;
-  }
-  .course-card:hover div.card-img-top {
-    filter:                     brightness(1);
   }
 `;
 document.head.appendChild(style);
