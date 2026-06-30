@@ -3,7 +3,7 @@ const wallpaperUrl = 'https://images.pexels.com/photos/2815799/pexels-photo-2815
 const welcomeGradientA = '#ec4899';
 const welcomeGradientB = '#ffbf00';
 const textColorPrimary = '#aee2ff';
-const textColorSecondary = '#9fa1ff';
+const textColorSecondary = '#8cc0eb';
 
 
 // extract username and set for welcome
