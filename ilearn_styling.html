@@ -1,0 +1,574 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.halo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
+<script>
+    const welcomeGradientA = '#ec4899';
+    const welcomeGradientB = '#ffbf00';
+    const textColorPrimary = '#aee2ff';
+    const textColorSecondary = '#8cc0eb';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        let loginFooter = Array.from(document.querySelectorAll('div.footer-section'))
+            .find(el => el.querySelector('div')?.classList.contains('logininfo') ?? false);
+
+        let loginInfo = loginFooter.firstElementChild.firstElementChild;
+        let name = loginInfo.querySelector('a').textContent.trim().split(' ').at(-1);
+
+        let welcome = document.getElementById('custom-welcome');
+        welcome.textContent = getGreeting(name);
+    });
+
+    function getGreeting(username) {
+        const hour = new Date().getHours();
+
+        let timeGreeting;
+
+        if (hour <= 2) timeGreeting = "Good evening";
+        else if (hour <= 5) timeGreeting = "Go to bed";
+        else if (hour <= 11) timeGreeting = "Good morning";
+        else if (hour <= 16) timeGreeting = "Good afternoon";
+        else if (hour <= 20) timeGreeting = "Good evening";
+        else timeGreeting = "Welcome back";
+
+        const rareMessage = `beep boop bap bap?`;
+        const normalMessage = `${timeGreeting}, ${username}!`;
+
+        return Math.random() < 0.05 ? rareMessage : normalMessage;
+    }
+
+    const style = document.createElement('style');
+    style.textContent = `
+  :root {
+    --theme-primary: ${textColorPrimary};
+    --theme-secondary: ${textColorSecondary};
+    --theme-gradient-a: ${welcomeGradientA};
+    --theme-gradient-b: ${welcomeGradientB};
+    --theme-header-text: #ffffff;
+  }
+  html, body {
+    background: transparent !important;
+    touch-action: none;
+  }
+  #vanta-canvas-bg,
+  #tubes-canvas-bg {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: -1 !important;
+    pointer-events: none !important;
+  }
+  #vanta-canvas-bg {
+    display: block;
+  }
+  #page, #page-wrapper, .page-context-header {
+    background: transparent !important;
+  }
+  html {
+    color-scheme: dark;
+  }
+  body[data-theme-background="birds"] header h1,
+  body[data-theme-background="birds"] header h2,
+  body[data-theme-background="birds"] .page-header h1,
+  body[data-theme-background="birds"] .page-header h2,
+  body[data-theme-background="birds"] .page-context-header,
+  body[data-theme-background="birds"] .navbar-brand {
+    background: linear-gradient(75deg, #ff66cf 0%, #ff8f73 28%, #ffc957 58%, #ff8adf 82%, #7ef0ff 100%) !important;
+    background-size: 220% 220% !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: 0 0 14px rgba(255, 102, 207, 0.14), 0 0 18px rgba(255, 143, 115, 0.1), 0 0 22px rgba(255, 201, 87, 0.08);
+    animation: birds-header-shift 8s ease-in-out infinite !important;
+  }
+  @keyframes birds-header-shift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  body[data-theme-background="birds"] .navbar button,
+  body[data-theme-background="birds"] .userbutton,
+  body[data-theme-background="birds"] .usermenu button,
+  body[data-theme-background="birds"] .dropdown-toggle {
+    background: transparent !important;
+    color: #7ef0ff !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  body[data-theme-background="birds"] .navbar button svg,
+  body[data-theme-background="birds"] .userbutton svg,
+  body[data-theme-background="birds"] .usermenu button svg,
+  body[data-theme-background="birds"] .dropdown-toggle svg,
+  body[data-theme-background="birds"] .navbar button i,
+  body[data-theme-background="birds"] .userbutton i,
+  body[data-theme-background="birds"] .usermenu button i,
+  body[data-theme-background="birds"] .dropdown-toggle i {
+    fill: currentColor !important;
+    color: currentColor !important;
+  }
+  body[data-theme-background="halo"] header h1,
+  body[data-theme-background="halo"] header h2,
+  body[data-theme-background="halo"] .page-header h1,
+  body[data-theme-background="halo"] .page-header h2,
+  body[data-theme-background="halo"] .page-context-header,
+  body[data-theme-background="halo"] .navbar-brand {
+    background: linear-gradient(75deg, #00e5ff, #ff4fd8, #c6ff00) !important;
+    background-size: 220% 220% !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: 0 0 14px rgba(0, 229, 255, 0.18), 0 0 18px rgba(255, 79, 216, 0.12), 0 0 22px rgba(198, 255, 0, 0.1);
+    animation: halo-header-shift 8s ease-in-out infinite !important;
+  }
+  @keyframes halo-header-shift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  body[data-theme-background="halo"] .navbar button,
+  body[data-theme-background="halo"] .userbutton,
+  body[data-theme-background="halo"] .usermenu button,
+  body[data-theme-background="halo"] .dropdown-toggle {
+    background: transparent !important;
+    color: #c6ff00 !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  body[data-theme-background="halo"] .navbar button svg,
+  body[data-theme-background="halo"] .userbutton svg,
+  body[data-theme-background="halo"] .usermenu button svg,
+  body[data-theme-background="halo"] .dropdown-toggle svg,
+  body[data-theme-background="halo"] .navbar button i,
+  body[data-theme-background="halo"] .userbutton i,
+  body[data-theme-background="halo"] .usermenu button i,
+  body[data-theme-background="halo"] .dropdown-toggle i {
+    fill: currentColor !important;
+    color: currentColor !important;
+  }
+  .dropdown-menu,
+  .popover,
+  .tooltip-inner,
+  .modal-content,
+  .moodle-dialogue-wrap,
+  .moodle-dialogue-base .moodle-dialogue,
+  .drawer .dropdown-menu,
+  .usermenu .dropdown-menu,
+  .navbar .dropdown-menu {
+    background: linear-gradient(180deg, rgba(12, 16, 32, 0.98), rgba(20, 24, 44, 0.98)) !important;
+    color: #eaf7ff !important;
+    border: 1px solid rgba(126, 240, 255, 0.16) !important;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(255, 79, 216, 0.05) !important;
+    backdrop-filter: blur(18px) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+  }
+  .dropdown-menu .dropdown-item,
+  .dropdown-menu a,
+  .popover .popover-body,
+  .modal-content,
+  .moodle-dialogue-wrap,
+  .moodle-dialogue-base .moodle-dialogue {
+    color: #eaf7ff !important;
+  }
+  .dropdown-menu .dropdown-item:hover,
+  .dropdown-menu .dropdown-item:focus,
+  .dropdown-menu a:hover,
+  .dropdown-menu a:focus {
+    background: rgba(126, 240, 255, 0.12) !important;
+    color: #ffffff !important;
+  }
+  .navbar button,
+  .userbutton,
+  .usermenu button,
+  .dropdown-toggle {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .navbar button:hover,
+  .userbutton:hover,
+  .usermenu button:hover,
+  .dropdown-toggle:hover {
+    background: rgba(126, 240, 255, 0.08) !important;
+    box-shadow: none !important;
+  }
+  header h1,
+  header h2,
+  .page-header h1,
+  .page-header h2,
+  .page-context-header,
+  .navbar,
+  .navbar a,
+  .navbar .nav-link,
+  nav .nav-link,
+  nav .dropdown-toggle,
+  nav .nav-link,
+  nav a,
+  nav button,
+  .navbar-brand,
+  .userbutton,
+  .usermenu a,
+  .usermenu button {
+    color: var(--theme-header-text) !important;
+  }
+  .vanta-switcher-container {
+    position: fixed !important;
+    bottom: 20px !important;
+    left: 20px !important;
+    z-index: 99999 !important;
+  }
+  .vanta-switcher {
+    background: rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    padding: 6px 12px !important;
+    border-radius: 8px !important;
+    font-family: sans-serif !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    outline: none !important;
+  }
+  .vanta-switcher option {
+    background: #222222 !important;
+    color: #ffffff !important;
+  }
+  #tubes-canvas-bg {
+    display: none;
+  }
+  .card-body h3 {
+    color:                      var(--theme-primary) !important;
+  }
+  .card-body span:not(.course-card *) {
+    color:                      var(--theme-secondary) !important;
+  }
+  .card-body li.page-item a {
+    color:                      #eeeeee !important;
+    background-color:           color-mix(in srgb, var(--theme-secondary) 90%, white) !important;
+    border:                     none !important;  
+  }
+  .card-body li.page-item i {
+    color:                      #eeeeee !important;
+  }
+  .card-text input,
+  .drawer-right .card,
+  .course-card {
+    background:                 rgba(255,255,255,0.2) !important;
+    border:                     none !important;
+    box-shadow:                 none !important;
+    -webkit-box-shadow:         none !important;
+    backdrop-filter:            blur(24px) !important;
+    -webkit-backdrop-filter:    blur(24px) !important;
+  }
+  .course-card span:not(a span) {
+    color:                      var(--theme-secondary) !important;
+  }
+  .course-card div:not(span) {
+    color:                      var(--theme-secondary) !important;
+  }
+  .course-card a {
+    color:                      var(--theme-primary) !important;
+    font-weight:                700 !important;
+  }
+  .course-card:hover div.card-img-top {
+    filter:                     brightness(1);
+  }
+  .coursename i {
+    color:                      var(--theme-primary) !important;
+  }
+  .card-footer {
+     background:                transparent !important
+  }  
+  .custom-welcome-text {
+    font-family:                'Trebuchet MS', serif;
+    font-size:                  4rem;
+    font-weight:                bold;
+    background:                 linear-gradient(75deg, var(--theme-gradient-a), var(--theme-gradient-b));
+    background-size:            200% 200%;
+    background-clip:            text;
+    -webkit-background-clip:    text;
+    -webkit-text-fill-color:    transparent;
+    -webkit-text-stroke:        2px transparent;
+    animation:                  welcome-gradient-shift 7s ease-in-out infinite;
+
+    position:                   absolute;
+    top:                        15vh;
+    left:                       50%;
+    transform:                  translateX(-50%);
+    text-align:                 center;
+  }
+  @keyframes welcome-gradient-shift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  .card-img-top {
+    filter:                     brightness(0.8);
+    transition:                 filter 0.2s ease;
+  }
+`;
+    document.head.appendChild(style);
+
+    const bgDiv = document.createElement('div');
+    bgDiv.id = 'vanta-canvas-bg';
+    document.body.prepend(bgDiv);
+
+    const tubesCanvas = document.createElement('canvas');
+    tubesCanvas.id = 'tubes-canvas-bg';
+    document.body.prepend(tubesCanvas);
+
+    const switcherContainer = document.createElement('div');
+    switcherContainer.className = 'vanta-switcher-container';
+    switcherContainer.innerHTML = `
+        <select id="vanta-theme-select" class="vanta-switcher">
+            <option value="halo">Halo Theme</option>
+            <option value="birds">Birds Theme</option>
+        <option value="tubes">Tubes Cursor</option>
+        </select>
+    `;
+    document.body.appendChild(switcherContainer);
+
+    const section = document.getElementById('block-region-content');
+    const newDiv = document.createElement('div');
+
+    newDiv.className = 'custom-welcome-text';
+    newDiv.id = 'custom-welcome';
+    newDiv.textContent = '...';
+
+    section.insertBefore(newDiv, section.children[2]);
+
+    const body_div = document.getElementById('topofscroll');
+    body_div.style.backgroundColor = 'transparent';
+
+    document.getElementById('themeboostunioninfobanner1').remove();
+    const title_div = Array.from(document.querySelectorAll('h1'))
+        .find(el => el.textContent.trim() === 'Dashboard');
+
+    if (title_div) {
+        title_div.parentElement.parentElement.parentElement.parentElement.parentElement.remove();
+    }
+
+    document.querySelectorAll('section.block').forEach(el => {
+        Object.assign(el.style, {
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            webkitBackdropFilter: 'blur(10px)',
+        });
+        el.style.setProperty('border', 'none', 'important');
+        el.style.setProperty('border-radius', '12px', 'important');
+        el.style.setProperty('box-shadow', '0 8px 32px rgba(0, 0, 0, 0.3)', 'important');
+    });
+
+    const fav_course = Array.from(document.querySelectorAll('h3'))
+        .find(el => el.textContent.trim() === 'Favorisierte Kurse');
+
+    if (fav_course) {
+        let wrap = fav_course.parentElement.parentElement;
+        wrap.style.setProperty('margin-top', 'calc(100vh - 28em)', 'important');
+        wrap.style.setProperty('margin-bottom', '5em', 'important');
+    }
+
+    const navbar = document.querySelector("nav");
+    Object.assign(navbar.style, {
+        backdropFilter: 'blur(10px)',
+        webkitBackdropFilter: 'blur(10px)',
+    });
+    navbar.style.setProperty('background', 'rgba(255, 255, 255, 0.1)', 'important');
+    navbar.style.setProperty('border', 'none', 'important');
+    navbar.style.setProperty('border-radius', '12px', 'important');
+    navbar.style.setProperty('margin', '12px', 'important');
+
+    const container = document.getElementById('usernavigation');
+    if (container.lastElementChild) {
+        container.insertBefore(container.lastElementChild, container.firstElementChild);
+    }
+    container.querySelectorAll('.divider').forEach(el => el.remove());
+
+    const editWidget = container.querySelector('.editmode-switch-form');
+    editWidget.querySelector('label')?.remove();
+
+    const drawerButton = document.querySelector('.drawer-toggler');
+    drawerButton.style.setProperty('top', 'calc(96px + 0.7rem)', 'important');
+
+    const drawer = document.getElementById('theme_boost-drawers-blocks');
+    drawer.style.setProperty('top', '96px', 'important');
+    drawer.style.setProperty('height', 'calc(100vh - 112px)', 'important');
+    drawer.style.setProperty('border-radius', '12px 0 0 12px', 'important');
+    Object.assign(drawer.style, {
+        backdropFilter: 'blur(10px)',
+        webkitBackdropFilter: 'blur(10px)',
+    });
+    drawer.style.setProperty('background', 'rgba(255, 255, 255, 0.1)', 'important');
+
+    const drawerContent = drawer.querySelector('.drawercontent');
+    drawerContent.style.setProperty('padding-left', '12px', 'important');
+
+    let vantaEffect = null;
+    let tubesEffect = null;
+    let tubesModulePromise = null;
+    let activeTheme = null;
+
+    const themePalettes = {
+      halo: {
+        primary: '#aee2ff',
+        secondary: '#8cc0eb',
+        gradientA: '#ec4899',
+        gradientB: '#ffbf00',
+        headerText: '#ccefff'
+      },
+      birds: {
+        primary: '#b2f7d2',
+        secondary: '#8ce0b0',
+        gradientA: '#ff66cf',
+        gradientB: '#ffc957',
+        headerText: '#ffd6ef'
+      },
+      tubes: {
+        primary: '#ffd6ff',
+        secondary: '#b8ffb0',
+        gradientA: '#f967fb',
+        gradientB: '#53bc28',
+        headerText: '#ffffff'
+      }
+    };
+
+    function applyThemePalette(theme) {
+      const palette = themePalettes[theme] || themePalettes.halo;
+      const rootStyle = document.documentElement.style;
+
+      document.body.dataset.themeBackground = theme;
+      rootStyle.setProperty('--theme-primary', palette.primary);
+      rootStyle.setProperty('--theme-secondary', palette.secondary);
+      rootStyle.setProperty('--theme-gradient-a', palette.gradientA);
+      rootStyle.setProperty('--theme-gradient-b', palette.gradientB);
+      rootStyle.setProperty('--theme-header-text', palette.headerText);
+    }
+
+    function destroyEffect(effect) {
+        if (!effect) {
+            return;
+        }
+
+        if (typeof effect.dispose === 'function') {
+            effect.dispose();
+            return;
+        }
+
+        if (typeof effect.destroy === 'function') {
+            effect.destroy();
+        }
+    }
+
+    async function initTubes() {
+        if (tubesEffect) {
+            return tubesEffect;
+        }
+
+        if (!tubesModulePromise) {
+            tubesModulePromise = import('https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js');
+        }
+
+        const module = await tubesModulePromise;
+        const TubesCursor = module.default || module;
+
+        tubesEffect = TubesCursor(tubesCanvas, {
+            tubes: {
+                colors: ['#f967fb', '#53bc28', '#6958d5'],
+                lights: {
+                    intensity: 200,
+                    colors: ['#83f36e', '#fe8a2e', '#ff008a', '#60aed5']
+                }
+            }
+        });
+
+        return tubesEffect;
+    }
+
+    async function initBackground(theme) {
+        activeTheme = theme;
+      applyThemePalette(theme);
+
+        if (vantaEffect) {
+            destroyEffect(vantaEffect);
+            vantaEffect = null;
+        }
+
+        if (tubesEffect) {
+            destroyEffect(tubesEffect);
+            tubesEffect = null;
+        }
+
+        bgDiv.style.display = 'none';
+        tubesCanvas.style.display = 'none';
+
+        if (theme === 'birds') {
+            bgDiv.style.display = 'block';
+            vantaEffect = VANTA.BIRDS({
+                el: "#vanta-canvas-bg",
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                scale: 1.00,
+                scaleMobile: 1.00
+            });
+            return;
+        }
+
+        if (theme === 'tubes') {
+            tubesCanvas.style.display = 'block';
+            await initTubes();
+            if (activeTheme !== 'tubes') {
+                destroyEffect(tubesEffect);
+                tubesEffect = null;
+            }
+            return;
+        }
+
+        bgDiv.style.display = 'block';
+        vantaEffect = VANTA.HALO({
+            el: "#vanta-canvas-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            size: 1.40
+        });
+    }
+
+    const selectEl = document.getElementById('vanta-theme-select');
+    const availableThemes = new Set(['halo', 'birds', 'tubes']);
+    const savedTheme = localStorage.getItem('vanta-preferred-theme');
+    const initialTheme = availableThemes.has(savedTheme) ? savedTheme : 'halo';
+
+    selectEl.value = initialTheme;
+    initBackground(initialTheme);
+
+    selectEl.addEventListener('change', (e) => {
+      const chosenTheme = availableThemes.has(e.target.value) ? e.target.value : 'halo';
+        localStorage.setItem('vanta-preferred-theme', chosenTheme);
+        initBackground(chosenTheme);
+    });
+</script>
